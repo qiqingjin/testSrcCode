@@ -1,19 +1,19 @@
 var webpack = require('webpack');
 
-/*var commonsPlugin = new webpack.optimize.CommonsChunkPlugin('common.js');*/
+var commonsPlugin = new webpack.optimize.CommonsChunkPlugin('common.js');
   module.exports = {
      //插件项
-      /*plugins:[
+      plugins:[
           commonsPlugin, 
           new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"development"'
           }),
           new webpack.HotModuleReplacementPlugin()
-      ],*/
-      /*devServer: {
+      ],
+      devServer: {
         hot: true,
         inline: true
-      },*/
+      },
      //页面入口文件配置
      entry: {
          index : './index.js'
