@@ -1,14 +1,17 @@
 var webpack = require('webpack');
 
-var commonsPlugin = new webpack.optimize.CommonsChunkPlugin('common.js');
+//var commonsPlugin = new webpack.optimize.CommonsChunkPlugin('common.js');
+var HTMLPlugin = require('./src/plugins/HTMLPlugin');
+
   module.exports = {
      //插件项
       plugins:[
-          commonsPlugin, 
+          /*commonsPlugin, 
           new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"development"'
           }),
-          new webpack.HotModuleReplacementPlugin()
+          new webpack.HotModuleReplacementPlugin()*/
+          new HTMLPlugin()
       ],
       devServer: {
         hot: true,
@@ -16,7 +19,8 @@ var commonsPlugin = new webpack.optimize.CommonsChunkPlugin('common.js');
       },
      //页面入口文件配置
      entry: {
-         index : './index.js'
+         index : './index.js',
+         detail: './detail.js'
      },
      //入口文件输出配置
      output:{
