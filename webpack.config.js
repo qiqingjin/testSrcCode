@@ -6,7 +6,7 @@ var HTMLPlugin = require('./src/plugins/HTMLPlugin');
   module.exports = {
      //插件项
       plugins:[
-          /*commonsPlugin, 
+          /*commonsPlugin,
           new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"development"'
           }),
@@ -19,8 +19,8 @@ var HTMLPlugin = require('./src/plugins/HTMLPlugin');
       },
      //页面入口文件配置
      entry: {
-         index : './index.js',
-         detail: './detail.js'
+         index : './index.js'/*,
+         detail: './detail.js'*/
      },
      //入口文件输出配置
      output:{
@@ -44,6 +44,10 @@ var HTMLPlugin = require('./src/plugins/HTMLPlugin');
              test: /\.js$/, loader: 'babel-loader', query:{
                  presets:['es2015']
              }
+         },
+         {
+            test: /\.tpl\.html$/,
+            loader: 'html-template-loader'
          }/*,
          {
               test: /\.html$/,

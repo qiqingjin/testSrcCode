@@ -1,36 +1,6 @@
 /******/ (function(modules) { // webpackBootstrap
-/******/ 	// install a JSONP callback for chunk loading
-/******/ 	var parentJsonpFunction = window["webpackJsonp"];
-/******/ 	window["webpackJsonp"] = function webpackJsonpCallback(chunkIds, moreModules) {
-/******/ 		// add "moreModules" to the modules object,
-/******/ 		// then flag all "chunkIds" as loaded and fire callback
-/******/ 		var moduleId, chunkId, i = 0, callbacks = [];
-/******/ 		for(;i < chunkIds.length; i++) {
-/******/ 			chunkId = chunkIds[i];
-/******/ 			if(installedChunks[chunkId])
-/******/ 				callbacks.push.apply(callbacks, installedChunks[chunkId]);
-/******/ 			installedChunks[chunkId] = 0;
-/******/ 		}
-/******/ 		for(moduleId in moreModules) {
-/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
-/******/ 				modules[moduleId] = moreModules[moduleId];
-/******/ 			}
-/******/ 		}
-/******/ 		if(parentJsonpFunction) parentJsonpFunction(chunkIds, moreModules);
-/******/ 		while(callbacks.length)
-/******/ 			callbacks.shift().call(null, __webpack_require__);
-
-/******/ 	};
-
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
-/******/ 	// object to store loaded and loading chunks
-/******/ 	// "0" means "already loaded"
-/******/ 	// Array means "loading", array contains callbacks
-/******/ 	var installedChunks = {
-/******/ 		1:0
-/******/ 	};
 
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
@@ -56,29 +26,6 @@
 /******/ 		return module.exports;
 /******/ 	}
 
-/******/ 	// This file contains only the entry chunk.
-/******/ 	// The chunk loading function for additional chunks
-/******/ 	__webpack_require__.e = function requireEnsure(chunkId, callback) {
-/******/ 		// "0" is the signal for "already loaded"
-/******/ 		if(installedChunks[chunkId] === 0)
-/******/ 			return callback.call(null, __webpack_require__);
-
-/******/ 		// an array means "currently loading".
-/******/ 		if(installedChunks[chunkId] !== undefined) {
-/******/ 			installedChunks[chunkId].push(callback);
-/******/ 		} else {
-/******/ 			// start chunk loading
-/******/ 			installedChunks[chunkId] = [callback];
-/******/ 			var head = document.getElementsByTagName('head')[0];
-/******/ 			var script = document.createElement('script');
-/******/ 			script.type = 'text/javascript';
-/******/ 			script.charset = 'utf-8';
-/******/ 			script.async = true;
-
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"2":"temp"}[chunkId]||chunkId) + ".bundle.js";
-/******/ 			head.appendChild(script);
-/******/ 		}
-/******/ 	};
 
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
@@ -101,398 +48,385 @@
 	* @Author: Cynthia
 	* @Date:   2017-03-06 14:51:16
 	* @Last Modified by:   Cynthia
-	* @Last Modified time: 2017-05-07 15:46:57
+	* @Last Modified time: 2017-05-15 19:33:37
 	*/
 
 	'use strict';
 
-	//require('./src/bundle_require.js');
+	// require('./src/bundle_require.js');
 
-	__webpack_require__(2);
-	var Temp = __webpack_require__.e/* nsure */(2, function () {
+	__webpack_require__(1);
+	var tpl = __webpack_require__(5);
+	document.getElementsByTagName('div')[0].innerHTML = tpl;
+
+	// require.ensure
+	/*require('./src/tapable/testTapable.js');
+	let Temp = require.ensure('./src/plugins/temp.js', function(){
 		console.log('temp is loaded');
-	});
-	var temp = new Temp();
-	console.log('temp is resolved');
+	}, 'temp');
+	let temp = new Temp();
+	console.log('temp is resolved');*/
 
 /***/ }),
-/* 1 */,
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(2);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/less-loader/index.js!./index.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	/*
-	* @Author: Cynthia
-	* @Date:   2017-05-02 21:26:36
-	* @Last Modified by:   Cynthia
-	* @Last Modified time: 2017-05-03 21:28:52
-	*/
+	exports = module.exports = __webpack_require__(3)();
+	// imports
 
-	'use strict';
 
-	var Tapable = __webpack_require__(3);
-	var tapable = new Tapable();
-	tapable._plugins = {
-		"something": [function (a, cb) {
-			setTimeout(function () {
-				console.log('1', a);
-				cb();
-			}, 1500);
-		}, function (a, cb) {
-			setTimeout(function () {
-				console.log('2', a);
-				//出现错误
-				cb(new Error('error message'));
-			}, 1000);
-		}, function (a, cb) {
-			setTimeout(function () {
-				console.log('3', a);
-				cb();
-			}, 500);
-		}],
-		"anything": [function (a, cb) {
-			console.log('1', a);
-			var b = a + 1;
-			cb();
-			return b;
-		}, function (a, cb) {
-			console.log('2', a);
-			var b = a + 1;
-			cb();
-			return b;
-		}, function (a, cb) {
-			console.log('3', a);
-			var b = a + 1;
-			cb();
-			return b;
-		}]
-	};
-	//applyPluginsWaterfall
-	tapable.applyPluginsWaterfall('anything', 0, function () {
-		console.log('end');
-	});
+	// module
+	exports.push([module.id, "h1 {\n  color: blue;\n}\nh2 {\n  background-color: silver;\n}\n", ""]);
 
-	// applyPluginsParallel
-	//tapable. applyPluginsParallel('something', ' applyPluginsParallel', function(){console.log('end');});
+	// exports
 
-	// applyPluginsAsync
-	//tapable.applyPluginsAsync('something', 'applyPluginsAsync', function(){console.log('end');});
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	/*
 		MIT License http://www.opensource.org/licenses/mit-license.php
 		Author Tobias Koppers @sokra
 	*/
+	// css base code, injected by the css-loader
+	module.exports = function () {
+		var list = [];
 
-	// polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
-	// using the polyfill specifically to avoid the call to `Object.defineProperty` for performance reasons
-	function fastFilter(fun /*, thisArg*/) {
-		'use strict';
-
-		if (this === void 0 || this === null) {
-			throw new TypeError();
-		}
-
-		var t = Object(this);
-		var len = t.length >>> 0;
-		if (typeof fun !== 'function') {
-			throw new TypeError();
-		}
-
-		var res = [];
-		var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
-		for (var i = 0; i < len; i++) {
-			if (i in t) {
-				var val = t[i];
-
-				// NOTE: Technically this should Object.defineProperty at
-				//       the next index, as push can be affected by
-				//       properties on Object.prototype and Array.prototype.
-				//       But that method's new, and collisions should be
-				//       rare, so use the more-compatible alternative.
-				if (fun.call(thisArg, val, i, t)) {
-					res.push(val);
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for (var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if (item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
 				}
 			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function (modules, mediaQuery) {
+			if (typeof modules === "string") modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for (var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if (typeof id === "number") alreadyImportedModules[id] = true;
+			}
+			for (i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if (mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if (mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
 		}
 
-		return res;
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
 	}
 
-	function Tapable() {
-		this._plugins = {};
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
 	}
-	module.exports = Tapable;
 
-	function copyProperties(from, to) {
-		for (var key in from) {
-			to[key] = from[key];
-		}return to;
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
 	}
 
-	Tapable.mixin = function mixinTapable(pt) {
-		copyProperties(Tapable.prototype, pt);
-	};
-
-	Tapable.prototype.applyPlugins = function applyPlugins(name) {
-		if (!this._plugins[name]) return;
-		var args = Array.prototype.slice.call(arguments, 1);
-		var plugins = this._plugins[name];
-		for (var i = 0; i < plugins.length; i++) {
-			plugins[i].apply(this, args);
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
 		}
-	};
+	}
 
-	Tapable.prototype.applyPlugins0 = function applyPlugins0(name) {
-		var plugins = this._plugins[name];
-		if (!plugins) return;
-		for (var i = 0; i < plugins.length; i++) {
-			plugins[i].call(this);
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
 		}
-	};
+	}
 
-	Tapable.prototype.applyPlugins1 = function applyPlugins1(name, param) {
-		var plugins = this._plugins[name];
-		if (!plugins) return;
-		for (var i = 0; i < plugins.length; i++) {
-			plugins[i].call(this, param);
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
 		}
-	};
 
-	Tapable.prototype.applyPlugins2 = function applyPlugins2(name, param1, param2) {
-		var plugins = this._plugins[name];
-		if (!plugins) return;
-		for (var i = 0; i < plugins.length; i++) {
-			plugins[i].call(this, param1, param2);
-		}
-	};
+		update(obj);
 
-	Tapable.prototype.applyPluginsWaterfall = function applyPluginsWaterfall(name, init) {
-		if (!this._plugins[name]) return init;
-		var args = Array.prototype.slice.call(arguments, 2);
-		var plugins = this._plugins[name];
-		var current = init;
-		for (var i = 0; i < plugins.length; i++) {
-			current = plugins[i].apply(this, [current].concat(args));
-		}return current;
-	};
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
 
-	Tapable.prototype.applyPluginsWaterfall0 = function applyPluginsWaterfall0(name, init) {
-		var plugins = this._plugins[name];
-		if (!plugins) return init;
-		var current = init;
-		for (var i = 0; i < plugins.length; i++) {
-			current = plugins[i].call(this, current);
-		}return current;
-	};
+	var replaceText = (function () {
+		var textStore = [];
 
-	Tapable.prototype.applyPluginsBailResult = function applyPluginsBailResult(name) {
-		if (!this._plugins[name]) return;
-		var args = Array.prototype.slice.call(arguments, 1);
-		var plugins = this._plugins[name];
-		for (var i = 0; i < plugins.length; i++) {
-			var result = plugins[i].apply(this, args);
-			if (typeof result !== "undefined") {
-				return result;
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
 			}
 		}
-	};
+	}
 
-	Tapable.prototype.applyPluginsBailResult1 = function applyPluginsBailResult1(name, param) {
-		if (!this._plugins[name]) return;
-		var plugins = this._plugins[name];
-		for (var i = 0; i < plugins.length; i++) {
-			var result = plugins[i].call(this, param);
-			if (typeof result !== "undefined") {
-				return result;
-			}
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
 		}
-	};
 
-	Tapable.prototype.applyPluginsAsyncSeries = Tapable.prototype.applyPluginsAsync = function applyPluginsAsyncSeries(name) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		var callback = args.pop();
-		var plugins = this._plugins[name];
-		if (!plugins || plugins.length === 0) return callback();
-		var i = 0;
-		var _this = this;
-		args.push(copyProperties(callback, function next(err) {
-			if (err) return callback(err);
-			i++;
-			if (i >= plugins.length) {
-				return callback();
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
 			}
-			plugins[i].apply(_this, args);
-		}));
-		plugins[0].apply(this, args);
-	};
-
-	Tapable.prototype.applyPluginsAsyncSeries1 = function applyPluginsAsyncSeries1(name, param, callback) {
-		var plugins = this._plugins[name];
-		if (!plugins || plugins.length === 0) return callback();
-		var i = 0;
-		var _this = this;
-		var innerCallback = copyProperties(callback, function next(err) {
-			if (err) return callback(err);
-			i++;
-			if (i >= plugins.length) {
-				return callback();
-			}
-			plugins[i].call(_this, param, innerCallback);
-		});
-		plugins[0].call(this, param, innerCallback);
-	};
-
-	Tapable.prototype.applyPluginsAsyncSeriesBailResult = function applyPluginsAsyncSeriesBailResult(name) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		var callback = args.pop();
-		if (!this._plugins[name] || this._plugins[name].length === 0) return callback();
-		var plugins = this._plugins[name];
-		var i = 0;
-		var _this = this;
-		args.push(copyProperties(callback, function next() {
-			if (arguments.length > 0) return callback.apply(null, arguments);
-			i++;
-			if (i >= plugins.length) {
-				return callback();
-			}
-			plugins[i].apply(_this, args);
-		}));
-		plugins[0].apply(this, args);
-	};
-
-	Tapable.prototype.applyPluginsAsyncSeriesBailResult1 = function applyPluginsAsyncSeriesBailResult1(name, param, callback) {
-		var plugins = this._plugins[name];
-		if (!plugins || plugins.length === 0) return callback();
-		var i = 0;
-		var _this = this;
-		var innerCallback = copyProperties(callback, function next(err, result) {
-			if (arguments.length > 0) return callback(err, result);
-			i++;
-			if (i >= plugins.length) {
-				return callback();
-			}
-			plugins[i].call(_this, param, innerCallback);
-		});
-		plugins[0].call(this, param, innerCallback);
-	};
-
-	Tapable.prototype.applyPluginsAsyncWaterfall = function applyPluginsAsyncWaterfall(name, init, callback) {
-		if (!this._plugins[name] || this._plugins[name].length === 0) return callback(null, init);
-		var plugins = this._plugins[name];
-		var i = 0;
-		var _this = this;
-		var next = copyProperties(callback, function (err, value) {
-			if (err) return callback(err);
-			i++;
-			if (i >= plugins.length) {
-				return callback(null, value);
-			}
-			plugins[i].call(_this, value, next);
-		});
-		plugins[0].call(this, init, next);
-	};
-
-	Tapable.prototype.applyPluginsParallel = function applyPluginsParallel(name) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		var callback = args.pop();
-		if (!this._plugins[name] || this._plugins[name].length === 0) return callback();
-		var plugins = this._plugins[name];
-		var remaining = plugins.length;
-		args.push(copyProperties(callback, function (err) {
-			if (remaining < 0) return; // ignore
-			if (err) {
-				remaining = -1;
-				return callback(err);
-			}
-			remaining--;
-			if (remaining === 0) {
-				return callback();
-			}
-		}));
-		for (var i = 0; i < plugins.length; i++) {
-			plugins[i].apply(this, args);
-			if (remaining < 0) return;
+			styleElement.appendChild(document.createTextNode(css));
 		}
-	};
+	}
 
-	Tapable.prototype.applyPluginsParallelBailResult = function applyPluginsParallelBailResult(name) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		var callback = args[args.length - 1];
-		if (!this._plugins[name] || this._plugins[name].length === 0) return callback();
-		var plugins = this._plugins[name];
-		var currentPos = plugins.length;
-		var currentResult;
-		var done = [];
-		for (var i = 0; i < plugins.length; i++) {
-			args[args.length - 1] = function (i) {
-				return copyProperties(callback, function () {
-					if (i >= currentPos) return; // ignore
-					done.push(i);
-					if (arguments.length > 0) {
-						currentPos = i + 1;
-						done = fastFilter.call(done, function (item) {
-							return item <= i;
-						});
-						currentResult = Array.prototype.slice.call(arguments);
-					}
-					if (done.length === currentPos) {
-						callback.apply(null, currentResult);
-						currentPos = 0;
-					}
-				});
-			}(i);
-			plugins[i].apply(this, args);
-		}
-	};
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
 
-	Tapable.prototype.applyPluginsParallelBailResult1 = function applyPluginsParallelBailResult1(name, param, callback) {
-		var plugins = this._plugins[name];
-		if (!plugins || plugins.length === 0) return callback();
-		var currentPos = plugins.length;
-		var currentResult;
-		var done = [];
-		for (var i = 0; i < plugins.length; i++) {
-			var innerCallback = function (i) {
-				return copyProperties(callback, function () {
-					if (i >= currentPos) return; // ignore
-					done.push(i);
-					if (arguments.length > 0) {
-						currentPos = i + 1;
-						done = fastFilter.call(done, function (item) {
-							return item <= i;
-						});
-						currentResult = Array.prototype.slice.call(arguments);
-					}
-					if (done.length === currentPos) {
-						callback.apply(null, currentResult);
-						currentPos = 0;
-					}
-				});
-			}(i);
-			plugins[i].call(this, param, innerCallback);
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
 		}
-	};
 
-	Tapable.prototype.plugin = function plugin(name, fn) {
-		if (Array.isArray(name)) {
-			name.forEach(function (name) {
-				this.plugin(name, fn);
-			}, this);
-			return;
-		}
-		if (!this._plugins[name]) this._plugins[name] = [fn];else this._plugins[name].push(fn);
-	};
+		var blob = new Blob([css], { type: "text/css" });
 
-	Tapable.prototype.apply = function apply() {
-		for (var i = 0; i < arguments.length; i++) {
-			arguments[i].apply(this);
-		}
-	};
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+	module.exports = function (obj) {
+	obj || (obj = {});
+	var __t, __p = '';
+	with (obj) {
+	__p += 'this is a template.\r\nwhat\'s wrong?loader has worked!';
+
+	}
+	return __p
+	}
 
 /***/ })
 /******/ ]);

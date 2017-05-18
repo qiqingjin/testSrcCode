@@ -21,6 +21,8 @@
     "webpack": "^1.13.2"
   },
   "devDependencies": {
+    "ejs-loader": "^0.3.0",
+    "loadash": "0.0.1",
     "tapable": "^0.2.6",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.15.0"

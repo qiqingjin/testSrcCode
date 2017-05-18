@@ -2,7 +2,7 @@
 * @Author: Cynthia
 * @Date:   2017-05-07 13:57:30
 * @Last Modified by:   Cynthia
-* @Last Modified time: 2017-05-07 16:18:10
+* @Last Modified time: 2017-05-12 15:11:33
 */
 
 'use strict';
@@ -19,16 +19,17 @@ HTMLPlugin.prototype.apply = function(compiler){
 			//console.log('chunk.modules', chunk.modules.length);
 
 			chunk.modules.forEach(function(module){
-				console.log('module', module.resource);
+				console.log('--------------------------------------------');
+				console.log('module', module.index, module.resource);
 				module.fileDependencies.forEach(function(filepath){
-					//console.log('filepath', filepath);
+					console.log('filepath', filepath);
 				});
 			});
 
-			chunk.files.forEach(function(filename){
+			/*chunk.files.forEach(function(filename){
 				let source = compilation.assets[filename].source();
 				//console.log('file', source);
-			})
+			})*/
 		});
 
 		callback();
